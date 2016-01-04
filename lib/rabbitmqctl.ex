@@ -9,7 +9,7 @@ defmodule Rabbitmqctl do
 
   defp parse_args(args) do
     {options, commands, _} = OptionParser.parse(args,
-      switches: [name: :string]
+      switches: []
     )
     [options, commands]
   end
