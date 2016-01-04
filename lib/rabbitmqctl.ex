@@ -1,0 +1,2 @@
+defmodule Rabbitmqctl do
+end
