@@ -4,14 +4,19 @@ defmodule Rabbitmqctl do
   end
 
   def process_args(args) do
-    args |> parse_args |> process
+    args |> parse_args
   end
 
   defp parse_args(args) do
-    {options, commands, _} = OptionParser.parse(args,
-      switches: []
-    )
-    [options, commands]
+    case OptionParser.parse(args, switches: []) do
+      {_,  ["help"], _} -> [0, usage, nil]
+      {[], [],       _} -> unrecognised_command
+      {_,  _,        _} -> unrecognised_command
+    end
+  end
+
+  defp unrecognised_command do
+    [64, usage, "Error: could not recognise command"]
   end
 
   defp output([code, stdout, stderr]) do
@@ -20,18 +25,6 @@ defmodule Rabbitmqctl do
     end
     IO.puts stdout
     System.halt(code)
-  end
-
-  defp process([_, ["help"]]) do
-    [0, usage, nil]
-  end
-
-  defp process([[], []]) do
-    [64, usage, "Error: could not recognise command"]
-  end
-
-  defp process([_, _]) do
-    process([[], []])
   end
 
   defp usage do
