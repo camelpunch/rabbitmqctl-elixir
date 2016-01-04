@@ -2,18 +2,19 @@ defmodule RabbitmqctlTest do
   use ExUnit.Case, async: true
   doctest Rabbitmqctl
 
-  test "no command produces modified help with non-zero exit code" do
+  test "omitted command produces non-zero exit code, help and error" do
     assert Rabbitmqctl.process_args([]) ==
-      [64, "Error: could not recognise command\n" <> expected_usage]
+      [64, expected_usage, "Error: could not recognise command"]
   end
 
-  test "an unknown command produces modified help with non-zero exit code" do
+  test "an unknown command produces non-zero exit code, help and error" do
     assert Rabbitmqctl.process_args(["wewillneverhavethiscommand"]) ==
-      [64, "Error: could not recognise command\n" <> expected_usage]
+      [64, expected_usage, "Error: could not recognise command"]
   end
 
   test "help produces text with exit code 0" do
-    assert Rabbitmqctl.process_args(["help"]) == [0, expected_usage]
+    assert Rabbitmqctl.process_args(["help"]) ==
+      [0, expected_usage, nil]
   end
 
   defp expected_usage do

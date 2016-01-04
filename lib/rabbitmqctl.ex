@@ -14,17 +14,20 @@ defmodule Rabbitmqctl do
     [options, commands]
   end
 
-  defp output([code, s]) do
-    IO.puts s
+  defp output([code, stdout, stderr]) do
+    if stderr do
+      IO.puts :stderr, stderr
+    end
+    IO.puts stdout
     System.halt(code)
   end
 
   defp process([_, ["help"]]) do
-    [0, usage]
+    [0, usage, nil]
   end
 
   defp process([[], []]) do
-    [64, "Error: could not recognise command\n" <> usage]
+    [64, usage, "Error: could not recognise command"]
   end
 
   defp process([_, _]) do
