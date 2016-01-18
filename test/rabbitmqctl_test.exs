@@ -2,18 +2,23 @@ defmodule RabbitmqctlTest do
   use ExUnit.Case, async: true
   doctest Rabbitmqctl
 
+  test "status on a healthy node returns a list" do
+    assert Rabbitmqctl.parse_args(["status"], %FakeRpcCaller{}) ==
+      [0, [:something], nil]
+  end
+
   test "omitted command produces non-zero exit code, help and error" do
-    assert Rabbitmqctl.process_args([]) ==
+    assert Rabbitmqctl.parse_args([], %FakeRpcCaller{}) ==
       [64, expected_usage, "Error: could not recognise command"]
   end
 
   test "an unknown command produces non-zero exit code, help and error" do
-    assert Rabbitmqctl.process_args(["wewillneverhavethiscommand"]) ==
+    assert Rabbitmqctl.parse_args(["wewillneverhavethiscommand"], "") ==
       [64, expected_usage, "Error: could not recognise command"]
   end
 
   test "help produces text with exit code 0" do
-    assert Rabbitmqctl.process_args(["help"]) ==
+    assert Rabbitmqctl.parse_args(["help"], "") ==
       [0, expected_usage, nil]
   end
 

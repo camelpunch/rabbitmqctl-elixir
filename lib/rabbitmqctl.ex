@@ -1,17 +1,14 @@
 defmodule Rabbitmqctl do
   def main(args) do
-    args |> process_args |> output
+    args |> parse_args(%RMQRpc{}) |> output
   end
 
-  def process_args(args) do
-    args |> parse_args
-  end
-
-  defp parse_args(args) do
+  def parse_args(args, remote_caller) do
     case OptionParser.parse(args, switches: []) do
-      {_,  ["help"], _} -> [0, usage, nil]
-      {[], [],       _} -> unrecognised_command
-      {_,  _,        _} -> unrecognised_command
+      {_,  ["help"],   _} -> [0, usage, nil]
+      {_,  ["status"], _} -> RemoteCaller.call(remote_caller, "node", "mod", "fun", "args")
+      {[], [],         _} -> unrecognised_command
+      {_,  _,          _} -> unrecognised_command
     end
   end
 
